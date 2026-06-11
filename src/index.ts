@@ -6,6 +6,9 @@ import type {
   InputType,
 } from "./types/types";
 
+/* =========================
+   INPUT FACTORY
+========================= */
 class InputFactory {
   static create(fieldType: InputType): FormElement {
     switch (fieldType) {
@@ -33,31 +36,11 @@ class InputFactory {
     }
   }
 
-  private static checkCommonInputAttributes(
-    el: HTMLInputElement,
-    field: Field,
-  ) {
-    el.type = field.type ?? "text";
+  static apply(el: FormElement, name: string, field: Field) {
+    const isWrapper = el instanceof HTMLDivElement;
 
-    if (field.min !== undefined) el.min = String(field.min);
-    if (field.max !== undefined) el.max = String(field.max);
-    if (field.pattern !== undefined) el.pattern = field.pattern;
-  }
-
-  private static bindAttributesInput(el: HTMLInputElement, field: Field) {
-    this.checkCommonInputAttributes(el, field);
-  }
-
-  private static bindAttributesSelect(field: Field, el: HTMLSelectElement) {
-    if (field.multiple !== undefined) el.multiple = field.multiple;
-  }
-
-  static applyAttributes(el: FormElement, name: string, field: Field): void {
-    el.id = name;
-
-    this.checkAttributes(field);
-
-    if (!(el instanceof HTMLDivElement)) {
+    if (!isWrapper) {
+      el.id = "form-zen-" + name;
       el.name = name;
       el.required = field.required ?? false;
     }
@@ -67,43 +50,35 @@ class InputFactory {
     }
 
     if (el instanceof HTMLInputElement) {
-      this.bindAttributesInput(el, field);
-    }
+      el.type = field.type ?? "text";
 
-    if (el instanceof HTMLDivElement) {
-      this.applyOptionsInputCheckbox(field, name, el);
+      if (field.min !== undefined) el.min = String(field.min);
+      if (field.max !== undefined) el.max = String(field.max);
+      if (field.pattern !== undefined) el.pattern = field.pattern;
     }
 
     if (el instanceof HTMLSelectElement) {
-      this.applyOptionsSelect(el, field);
-      this.bindAttributesSelect(field, el);
+      if (field.multiple !== undefined) el.multiple = field.multiple;
+
+      if (field.options) {
+        field.options.forEach((opt) => {
+          const option = document.createElement("option");
+          option.value = opt;
+          option.textContent = opt;
+          el.appendChild(option);
+        });
+      }
+    }
+
+    if (el instanceof HTMLDivElement) {
+      this.applyCheckbox(el, name, field);
     }
   }
 
-  private static checkAttributes(field: Field) {
-    this.checkAttributesSelect(field);
-    this.checkAttributesInputNumber(field);
-  }
-
-  private static checkAttributesSelect(field: Field) {
-    if (field.type !== "select" && field.multiple !== undefined) {
-      throw new Error("Multiple attribute only allowed for select");
-    }
-  }
-
-  private static checkAttributesInputNumber(field: Field) {
-    if (
-      field.type !== "number" &&
-      (field.min !== undefined || field.max !== undefined)
-    ) {
-      throw new Error("Min/max attribute only allowed for number");
-    }
-  }
-
-  private static applyOptionsInputCheckbox(
-    field: Field,
-    name: string,
+  private static applyCheckbox(
     container: HTMLDivElement,
+    name: string,
+    field: Field,
   ) {
     if (!field.options) return;
 
@@ -115,57 +90,52 @@ class InputFactory {
       input.name = name;
       input.value = opt;
 
-      label.append(input, document.createTextNode(opt));
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(opt));
 
       container.appendChild(label);
     });
   }
-
-  private static applyOptionsSelect(el: HTMLSelectElement, field: Field) {
-    if (field.options) {
-      field.options.forEach((opt) => {
-        const option = document.createElement("option");
-        option.value = opt;
-        option.textContent = opt;
-        el.appendChild(option);
-      });
-    }
-  }
 }
 
+/* =========================
+   FIELD RENDERER
+========================= */
 class FieldRenderer {
   static render(name: string, field: Field): HTMLDivElement {
     const wrapper = document.createElement("div");
     wrapper.className = "form-group";
+    wrapper.id = `field-${name}`;
 
-    const label = this.createLabel(name, field);
+    const label = document.createElement("label");
+    label.htmlFor = name;
+    label.textContent = field.label;
+
     const input = InputFactory.create(field.type);
 
-    InputFactory.applyAttributes(input, name, field);
+    InputFactory.apply(input, name, field);
 
     wrapper.appendChild(label);
     wrapper.appendChild(input);
 
     return wrapper;
   }
-
-  private static createLabel(name: string, field: Field): HTMLLabelElement {
-    const label = document.createElement("label");
-    label.htmlFor = name;
-    label.textContent = field.label;
-
-    return label;
-  }
 }
 
+/* =========================
+   FORM ZEN
+========================= */
 export class FormZen {
   private root: HTMLElement;
   private form: HTMLFormElement;
+  private fields: Fields;
+  private callback: SubmitCallback | null = null;
 
   constructor(
     selector: string,
-    private fields: Fields,
-    private callback: SubmitCallback,
+    fields: Fields = {},
+    submitCallback?: SubmitCallback,
+    submitLabel: string = "Submit",
   ) {
     const root = document.querySelector(selector);
 
@@ -174,15 +144,72 @@ export class FormZen {
     }
 
     this.root = root as HTMLElement;
+    this.fields = fields;
 
     this.form = this.createForm();
 
     this.renderFields();
-    this.renderSubmitButton();
+    this.addButtonSubmit(submitLabel);
     this.bindSubmit();
-
     this.mount();
   }
+
+  /* =========================
+     PUBLIC API
+  ========================= */
+
+  addFields(fields: Fields): void {
+    Object.entries(fields).forEach(([name, field]) => {
+      if (this.fields[name]) {
+        throw new Error(`Field "${name}" already exists`);
+      }
+
+      this.fields[name] = field;
+
+      const el = FieldRenderer.render(name, field);
+      const submitBtn = this.getSubmitButton();
+
+      this.form.insertBefore(el, submitBtn);
+    });
+  }
+
+  removeFields(names: string[]): void {
+    names.forEach((name) => {
+      if (!this.fields[name]) return;
+
+      delete this.fields[name];
+
+      const el = this.form.querySelector(`#form-zen-${name}`);
+      const lab = this.form.querySelector(`label[for="${name}"]`);
+      el?.remove();
+      lab?.remove();
+    });
+  }
+
+  addButtonSubmit(
+    label: string,
+    type: "submit" | "button" | "reset" = "submit",
+  ): void {
+    const existing = this.getSubmitButton();
+
+    if (existing) {
+      existing.remove();
+    }
+
+    const button = document.createElement("button");
+    button.type = type;
+    button.textContent = label;
+
+    this.form.appendChild(button);
+  }
+
+  addCallback(cb: SubmitCallback): void {
+    this.callback = cb;
+  }
+
+  /* =========================
+     INTERNALS
+  ========================= */
 
   private createForm(): HTMLFormElement {
     const form = document.createElement("form");
@@ -197,19 +224,17 @@ export class FormZen {
     });
   }
 
-  private renderSubmitButton(): void {
-    const button = document.createElement("button");
-    button.type = "submit";
-    button.textContent = "Envoyer";
-
-    this.form.appendChild(button);
-  }
-
   private bindSubmit(): void {
     this.form.addEventListener("submit", (e) => {
       e.preventDefault();
-      this.callback(this.getFormData());
+      if (this.callback) {
+        this.callback(this.getFormData());
+      }
     });
+  }
+
+  private getSubmitButton(): HTMLButtonElement | null {
+    return this.form.querySelector('button[type="submit"]');
   }
 
   private getFormData(): Record<string, string | string[]> {
@@ -239,7 +264,6 @@ export class FormZen {
     this.root.appendChild(this.form);
   }
 }
-
 export type {
   Field,
   Fields,
@@ -247,5 +271,3 @@ export type {
   FormElement,
   InputType,
 } from "./types/types";
-
-export default FormZen;

@@ -16,13 +16,13 @@ It is dependency-free, easy to use, and designed for modern frontend application
 ## 📦 Installation
 
 ```bash
-npm install @tosbas/formzen
+npm install @tosbas/form-zen
 ```
 
 ## Quick start
 
 ```ts
-import { FormZen } from "@tosbas/formzen";
+import { FormZen } from "@tosbas/form-zen";
 
 new FormZen("#app", {
   username: {
@@ -51,7 +51,7 @@ new FormZen("#app", {
 You can use FormZen directly in the browser via CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@tosbas/formzen@latest/dist/index.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tosbas/form-zen@latest"></script>
 
 <script>
   const form = new FormZen("#app", {

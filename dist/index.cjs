@@ -20,8 +20,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var index_exports = {};
 __export(index_exports, {
-  FormZen: () => FormZen,
-  default: () => index_default
+  FormZen: () => FormZen
 });
 module.exports = __toCommonJS(index_exports);
 var InputFactory = class {
@@ -46,22 +45,10 @@ var InputFactory = class {
         throw new Error(`Type ${fieldType} inconnu`);
     }
   }
-  static checkCommonInputAttributes(el, field) {
-    el.type = field.type ?? "text";
-    if (field.min !== void 0) el.min = String(field.min);
-    if (field.max !== void 0) el.max = String(field.max);
-    if (field.pattern !== void 0) el.pattern = field.pattern;
-  }
-  static bindAttributesInput(el, field) {
-    this.checkCommonInputAttributes(el, field);
-  }
-  static bindAttributesSelect(field, el) {
-    if (field.multiple !== void 0) el.multiple = field.multiple;
-  }
-  static applyAttributes(el, name, field) {
-    el.id = name;
-    this.checkAttributes(field);
-    if (!(el instanceof HTMLDivElement)) {
+  static apply(el, name, field) {
+    const isWrapper = el instanceof HTMLDivElement;
+    if (!isWrapper) {
+      el.id = "form-zen-" + name;
       el.name = name;
       el.required = field.required ?? false;
     }
@@ -69,31 +56,27 @@ var InputFactory = class {
       el.placeholder = field.placeholder ?? field.label;
     }
     if (el instanceof HTMLInputElement) {
-      this.bindAttributesInput(el, field);
-    }
-    if (el instanceof HTMLDivElement) {
-      this.applyOptionsInputCheckbox(field, name, el);
+      el.type = field.type ?? "text";
+      if (field.min !== void 0) el.min = String(field.min);
+      if (field.max !== void 0) el.max = String(field.max);
+      if (field.pattern !== void 0) el.pattern = field.pattern;
     }
     if (el instanceof HTMLSelectElement) {
-      this.applyOptionsSelect(el, field);
-      this.bindAttributesSelect(field, el);
+      if (field.multiple !== void 0) el.multiple = field.multiple;
+      if (field.options) {
+        field.options.forEach((opt) => {
+          const option = document.createElement("option");
+          option.value = opt;
+          option.textContent = opt;
+          el.appendChild(option);
+        });
+      }
+    }
+    if (el instanceof HTMLDivElement) {
+      this.applyCheckbox(el, name, field);
     }
   }
-  static checkAttributes(field) {
-    this.checkAttributesSelect(field);
-    this.checkAttributesInputNumber(field);
-  }
-  static checkAttributesSelect(field) {
-    if (field.type !== "select" && field.multiple !== void 0) {
-      throw new Error("Multiple attribute only allowed for select");
-    }
-  }
-  static checkAttributesInputNumber(field) {
-    if (field.type !== "number" && (field.min !== void 0 || field.max !== void 0)) {
-      throw new Error("Min/max attribute only allowed for number");
-    }
-  }
-  static applyOptionsInputCheckbox(field, name, container) {
+  static applyCheckbox(container, name, field) {
     if (!field.options) return;
     field.options.forEach((opt) => {
       const label = document.createElement("label");
@@ -101,54 +84,82 @@ var InputFactory = class {
       input.type = "checkbox";
       input.name = name;
       input.value = opt;
-      label.append(input, document.createTextNode(opt));
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(opt));
       container.appendChild(label);
     });
-  }
-  static applyOptionsSelect(el, field) {
-    if (field.options) {
-      field.options.forEach((opt) => {
-        const option = document.createElement("option");
-        option.value = opt;
-        option.textContent = opt;
-        el.appendChild(option);
-      });
-    }
   }
 };
 var FieldRenderer = class {
   static render(name, field) {
     const wrapper = document.createElement("div");
     wrapper.className = "form-group";
-    const label = this.createLabel(name, field);
+    wrapper.id = `field-${name}`;
+    const label = document.createElement("label");
+    label.htmlFor = name;
+    label.textContent = field.label;
     const input = InputFactory.create(field.type);
-    InputFactory.applyAttributes(input, name, field);
+    InputFactory.apply(input, name, field);
     wrapper.appendChild(label);
     wrapper.appendChild(input);
     return wrapper;
   }
-  static createLabel(name, field) {
-    const label = document.createElement("label");
-    label.htmlFor = name;
-    label.textContent = field.label;
-    return label;
-  }
 };
 var FormZen = class {
-  constructor(selector, fields, callback) {
-    this.fields = fields;
-    this.callback = callback;
+  constructor(selector, fields = {}, submitCallback, submitLabel = "Submit") {
+    this.callback = null;
     const root = document.querySelector(selector);
     if (!root) {
       throw new Error("Aucun \xE9l\xE9ment trouv\xE9 : " + selector);
     }
     this.root = root;
+    this.fields = fields;
     this.form = this.createForm();
     this.renderFields();
-    this.renderSubmitButton();
+    this.addButtonSubmit(submitLabel);
     this.bindSubmit();
     this.mount();
   }
+  /* =========================
+     PUBLIC API
+  ========================= */
+  addFields(fields) {
+    Object.entries(fields).forEach(([name, field]) => {
+      if (this.fields[name]) {
+        throw new Error(`Field "${name}" already exists`);
+      }
+      this.fields[name] = field;
+      const el = FieldRenderer.render(name, field);
+      const submitBtn = this.getSubmitButton();
+      this.form.insertBefore(el, submitBtn);
+    });
+  }
+  removeFields(names) {
+    names.forEach((name) => {
+      if (!this.fields[name]) return;
+      delete this.fields[name];
+      const el = this.form.querySelector(`#form-zen-${name}`);
+      const lab = this.form.querySelector(`label[for="${name}"]`);
+      el?.remove();
+      lab?.remove();
+    });
+  }
+  addButtonSubmit(label, type = "submit") {
+    const existing = this.getSubmitButton();
+    if (existing) {
+      existing.remove();
+    }
+    const button = document.createElement("button");
+    button.type = type;
+    button.textContent = label;
+    this.form.appendChild(button);
+  }
+  addCallback(cb) {
+    this.callback = cb;
+  }
+  /* =========================
+     INTERNALS
+  ========================= */
   createForm() {
     const form = document.createElement("form");
     form.className = "formjs";
@@ -160,17 +171,16 @@ var FormZen = class {
       this.form.appendChild(el);
     });
   }
-  renderSubmitButton() {
-    const button = document.createElement("button");
-    button.type = "submit";
-    button.textContent = "Envoyer";
-    this.form.appendChild(button);
-  }
   bindSubmit() {
     this.form.addEventListener("submit", (e) => {
       e.preventDefault();
-      this.callback(this.getFormData());
+      if (this.callback) {
+        this.callback(this.getFormData());
+      }
     });
+  }
+  getSubmitButton() {
+    return this.form.querySelector('button[type="submit"]');
   }
   getFormData() {
     const data = {};
@@ -194,9 +204,7 @@ var FormZen = class {
     this.root.appendChild(this.form);
   }
 };
-var index_default = FormZen;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   FormZen
 });
-//# sourceMappingURL=index.cjs.map
