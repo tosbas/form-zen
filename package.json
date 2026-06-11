@@ -25,11 +25,12 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./cdn": "./dist/cdn.global.js"
+    "./cdn": "./dist/cdn.global.min.js"
   },
-  "browser": "./dist/cdn.global.js",
-  "unpkg": "./dist/cdn.global.js",
-  "jsdelivr": "./dist/cdn.global.js",
+  "browser": "./dist/cdn.global.min.js",
+  "unpkg": "./dist/cdn.global.min.js",
+  "jsdelivr": "./dist/cdn.global.min.js",
+  "style": "./dist/form-zen.min.css",
   "files": [
     "dist",
     "README.md"
