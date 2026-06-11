@@ -21,7 +21,8 @@ var FormZen = (() => {
   // src/index.ts
   var index_exports = {};
   __export(index_exports, {
-    FormZen: () => FormZen
+    FormZen: () => FormZen,
+    default: () => index_default
   });
   var InputFactory = class {
     static create(fieldType) {
@@ -193,6 +194,7 @@ var FormZen = (() => {
       this.root.appendChild(this.form);
     }
   };
+  var index_default = FormZen;
   return __toCommonJS(index_exports);
 })();
 //# sourceMappingURL=index.global.js.map
