@@ -51,7 +51,9 @@ new FormZen("#app", {
 You can use FormZen directly in the browser via CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@tosbas/form-zen@latest"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tosbas/form-zen@1.3.1/dist/form-zen.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@tosbas/form-zen@1.3.1/dist/cdn.global.min.js"></script>
 
 <script>
   const form = new FormZen("#app", {
