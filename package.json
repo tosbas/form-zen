@@ -1,0 +1,55 @@
+{
+  "name": "@tosbas/form-zen",
+  "version": "1.0.1",
+  "description": "Lightweight TypeScript library for generating forms",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "browser": "./dist/index.js",
+  "unpkg": "./dist/index.js",
+  "jsdelivr": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "node --test test/index.test.js"
+  },
+  "keywords": [
+    "form",
+    "forms",
+    "typescript",
+    "frontend",
+    "validation"
+  ],
+  "author": "Tosbas",
+  "license": "MIT",
+  "homepage": "https://github.com/tosbas/form-zen#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tosbas/form-zen.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tosbas/form-zen/issues"
+  },
+  "sideEffects": false,
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "jsdom": "^29.1.1",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3"
+  }
+}
