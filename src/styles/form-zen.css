@@ -1,0 +1,16 @@
+:root {
+  --fz-primary: #3b82f6;
+  --fz-border: #ccc;
+  --fz-radius: 6px;
+}
+
+.form-zen button {
+  background: var(--fz-primary);
+  border-radius: var(--fz-radius);
+}
+
+.form-zen{
+    background: #fff;
+    border: 1px solid var(--fz-border);
+    padding: 20px;
+}

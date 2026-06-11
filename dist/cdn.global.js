@@ -140,7 +140,7 @@ var FormZenCDN = (() => {
     ========================= */
     createForm() {
       const form = document.createElement("form");
-      form.className = "formjs";
+      form.className = "form-zen";
       return form;
     }
     renderFields() {

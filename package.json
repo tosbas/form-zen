@@ -3,10 +3,8 @@
   "version": "1.1.0",
   "description": "Lightweight TypeScript library for generating forms",
   "type": "module",
-
   "license": "MIT",
   "author": "Tosbas",
-
   "homepage": "https://github.com/tosbas/form-zen#readme",
   "repository": {
     "type": "git",
@@ -15,15 +13,12 @@
   "bugs": {
     "url": "https://github.com/tosbas/form-zen/issues"
   },
-
   "publishConfig": {
     "access": "public"
   },
-
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -32,24 +27,23 @@
     },
     "./cdn": "./dist/cdn.global.js"
   },
-
   "browser": "./dist/cdn.global.js",
   "unpkg": "./dist/cdn.global.js",
   "jsdelivr": "./dist/cdn.global.js",
-
   "files": [
     "dist",
     "README.md"
   ],
-
   "sideEffects": false,
-
   "scripts": {
-    "build": "tsup",
+    "clean": "rimraf node_modules package-lock.json dist",
+    "reset": "npm run clean && npm install",
+    "build:npm": "tsup",
+    "build:cdn": "npx esbuild src/cdn.ts --bundle --minify --format=iife --outfile=dist/cdn.global.min.js && npx esbuild src/styles/form-zen.css --minify --outfile=dist/form-zen.min.css",
+    "build": "npm run build:npm && npm run build:cdn",
     "dev": "tsup --watch",
     "test": "node --test test/index.test.js"
   },
-
   "keywords": [
     "form",
     "forms",
@@ -59,10 +53,11 @@
     "vanilla-js",
     "ui"
   ],
-
   "devDependencies": {
     "@types/node": "^25.9.1",
+    "esbuild": "^0.28.0",
     "jsdom": "^29.1.1",
+    "rimraf": "^6.1.3",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3"
   }
