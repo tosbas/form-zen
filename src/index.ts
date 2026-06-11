@@ -213,7 +213,7 @@ export class FormZen {
 
   private createForm(): HTMLFormElement {
     const form = document.createElement("form");
-    form.className = "formjs";
+    form.className = "form-zen";
     return form;
   }
 
