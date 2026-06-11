@@ -1,14 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FormZen</title>
-</head>
-<body>
-
+  </head>
+  <body>
     <div id="myForm"></div>
-    
-    <script type="module" src="test.js"></script>
-</body>
+
+    <script src="./dist/cdn.global.js"></script>
+
+    <script>
+      const formZen = new FormZen("#myForm");
+      formZen.addFields({
+        name: {
+          label: "Name",
+          type: "text",
+        }
+      });
+      formZen.addButtonSubmit("test");
+      formZen.addCallback((data) => {
+        console.log("Form submitted with data:", data);
+      });
+    </script>
+  </body>
 </html>
