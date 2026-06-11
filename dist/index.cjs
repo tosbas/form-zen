@@ -20,7 +20,8 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var index_exports = {};
 __export(index_exports, {
-  FormZen: () => FormZen
+  FormZen: () => FormZen,
+  default: () => index_default
 });
 module.exports = __toCommonJS(index_exports);
 var InputFactory = class {
@@ -193,6 +194,7 @@ var FormZen = class {
     this.root.appendChild(this.form);
   }
 };
+var index_default = FormZen;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   FormZen

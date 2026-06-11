@@ -169,7 +169,9 @@ var FormZen = class {
     this.root.appendChild(this.form);
   }
 };
+var index_default = FormZen;
 export {
-  FormZen
+  FormZen,
+  index_default as default
 };
 //# sourceMappingURL=index.js.map

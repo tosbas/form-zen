@@ -29,4 +29,4 @@ declare class FormZen {
     private mount;
 }
 
-export { type Field, type Fields, type FormElement, FormZen, type InputType, type SubmitCallback };
+export { type Field, type Fields, type FormElement, FormZen, type InputType, type SubmitCallback, FormZen as default };
