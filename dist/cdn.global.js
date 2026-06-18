@@ -8,6 +8,7 @@ var FormZenCDN = (() => {
           return document.createElement("textarea");
         case "select":
           return document.createElement("select");
+        case void 0:
         case "text":
         case "number":
         case "email":
@@ -20,7 +21,7 @@ var FormZenCDN = (() => {
         case "checkbox":
           return document.createElement("div");
         default:
-          throw new Error(`Type ${fieldType} inconnu`);
+          throw new Error(`Type ${fieldType} unknown`);
       }
     }
     static apply(el, name, field) {
@@ -71,10 +72,10 @@ var FormZenCDN = (() => {
   var FieldRenderer = class {
     static render(name, field) {
       const wrapper = document.createElement("div");
-      wrapper.className = "form-group";
-      wrapper.id = `field-${name}`;
+      wrapper.className = "form-zen-group";
+      wrapper.id = `form-zen-field-${name}`;
       const label = document.createElement("label");
-      label.htmlFor = name;
+      label.htmlFor = `form-zen-${name}`;
       label.textContent = field.label;
       const input = InputFactory.create(field.type);
       InputFactory.apply(input, name, field);
@@ -91,6 +92,7 @@ var FormZenCDN = (() => {
         throw new Error("Aucun \xE9l\xE9ment trouv\xE9 : " + selector);
       }
       this.root = root;
+      this.validateFields(fields);
       this.fields = fields;
       this.form = this.createForm();
       this.renderFields();
@@ -117,7 +119,7 @@ var FormZenCDN = (() => {
         if (!this.fields[name]) return;
         delete this.fields[name];
         const el = this.form.querySelector(`#form-zen-${name}`);
-        const lab = this.form.querySelector(`label[for="${name}"]`);
+        const lab = this.form.querySelector(`#form-zen-${name}`);
         el?.remove();
         lab?.remove();
       });
@@ -138,6 +140,41 @@ var FormZenCDN = (() => {
     /* =========================
        INTERNALS
     ========================= */
+    assertField(field, name) {
+      if (!field || typeof field !== "object") {
+        throw new Error(`Field "${name}" invalide`);
+      }
+      const allowed = /* @__PURE__ */ new Set([
+        "type",
+        "label",
+        "required",
+        "placeholder",
+        "min",
+        "max",
+        "pattern",
+        "options",
+        "multiple"
+      ]);
+      for (const key of Object.keys(field)) {
+        if (!allowed.has(key)) {
+          throw new Error(`Field "${name}" unknown key: ${key}`);
+        }
+      }
+      if (typeof field.type !== "string") {
+        throw new Error(`Field "${name}" type must be string`);
+      }
+      if (typeof field.label !== "string") {
+        throw new Error(`Field "${name}" label must be string`);
+      }
+      if (field.options && !Array.isArray(field.options)) {
+        throw new Error(`Field "${name}" options must be array`);
+      }
+    }
+    validateFields(fields) {
+      Object.entries(fields).forEach(([name, field]) => {
+        this.assertField(field, name);
+      });
+    }
     createForm() {
       const form = document.createElement("form");
       form.className = "form-zen";
@@ -157,23 +194,37 @@ var FormZenCDN = (() => {
         }
       });
     }
+    emitSubmit() {
+      const data = this.getFormData();
+      if (this.callback) {
+        this.callback(data);
+      }
+    }
     getSubmitButton() {
       return this.form.querySelector('button[type="submit"]');
     }
     getFormData() {
       const data = {};
-      const formData = new FormData(this.form);
-      formData.forEach((value, key) => {
-        const val = String(value);
-        if (data[key] !== void 0) {
-          const current = data[key];
+      const elements = this.form.querySelectorAll("input, select, textarea");
+      elements.forEach((el) => {
+        const name = el.name;
+        if (!name) return;
+        let value = "";
+        if (el instanceof HTMLInputElement && el.type === "checkbox") {
+          if (!el.checked) return;
+          value = el.value;
+        } else {
+          value = el.value;
+        }
+        if (data[name] !== void 0) {
+          const current = data[name];
           if (Array.isArray(current)) {
-            current.push(val);
+            current.push(value);
           } else {
-            data[key] = [current, val];
+            data[name] = [current, value];
           }
         } else {
-          data[key] = val;
+          data[name] = value;
         }
       });
       return data;

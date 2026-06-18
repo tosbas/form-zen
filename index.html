@@ -3,25 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./dist/form-zen.min.css">
+    <link rel="stylesheet" href="./dist/form-zen.min.css" />
     <title>FormZen</title>
   </head>
   <body>
     <div id="myForm"></div>
 
-    <script src="./dist/cdn.global.min.js"></script>
+    <script type="module">
+      import { FormZen } from "./dist/index.js";
 
-    <script>
-      const formZen = new FormZen("#myForm");
-      formZen.addFields({
-        name: {
-          label: "Name",
-          type: "text",
-        }
-      });
-      formZen.addButtonSubmit("test");
-      formZen.addCallback((data) => {
-        console.log("Form submitted with data:", data);
+      const formZen = new FormZen("#myForm", {
+        test: {
+          label: "Hello",
+          type: "select",
+        },
       });
     </script>
   </body>

@@ -25,9 +25,12 @@ declare class FormZen {
     removeFields(names: string[]): void;
     addButtonSubmit(label: string, type?: "submit" | "button" | "reset"): void;
     addCallback(cb: SubmitCallback): void;
+    private assertField;
+    private validateFields;
     private createForm;
     private renderFields;
     private bindSubmit;
+    emitSubmit(): void;
     private getSubmitButton;
     private getFormData;
     private mount;
