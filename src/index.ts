@@ -18,6 +18,7 @@ class InputFactory {
       case "select":
         return document.createElement("select");
 
+      case undefined:
       case "text":
       case "number":
       case "email":
@@ -32,7 +33,7 @@ class InputFactory {
         return document.createElement("div");
 
       default:
-        throw new Error(`Type ${fieldType} inconnu`);
+        throw new Error(`Type ${fieldType} unknown`);
     }
   }
 
@@ -104,11 +105,11 @@ class InputFactory {
 class FieldRenderer {
   static render(name: string, field: Field): HTMLDivElement {
     const wrapper = document.createElement("div");
-    wrapper.className = "form-group";
-    wrapper.id = `field-${name}`;
+    wrapper.className = "form-zen-group";
+    wrapper.id = `form-zen-field-${name}`;
 
     const label = document.createElement("label");
-    label.htmlFor = name;
+    label.htmlFor = `form-zen-${name}`;
     label.textContent = field.label;
 
     const input = InputFactory.create(field.type);
@@ -144,6 +145,8 @@ export class FormZen {
     }
 
     this.root = root as HTMLElement;
+
+    this.validateFields(fields);
     this.fields = fields;
 
     this.form = this.createForm();
@@ -180,7 +183,7 @@ export class FormZen {
       delete this.fields[name];
 
       const el = this.form.querySelector(`#form-zen-${name}`);
-      const lab = this.form.querySelector(`label[for="${name}"]`);
+      const lab = this.form.querySelector(`#form-zen-${name}`);
       el?.remove();
       lab?.remove();
     });
@@ -210,6 +213,47 @@ export class FormZen {
   /* =========================
      INTERNALS
   ========================= */
+  private assertField(field: any, name?: string): asserts field is Field {
+    if (!field || typeof field !== "object") {
+      throw new Error(`Field "${name}" invalide`);
+    }
+
+    const allowed = new Set([
+      "type",
+      "label",
+      "required",
+      "placeholder",
+      "min",
+      "max",
+      "pattern",
+      "options",
+      "multiple",
+    ]);
+
+    for (const key of Object.keys(field)) {
+      if (!allowed.has(key)) {
+        throw new Error(`Field "${name}" unknown key: ${key}`);
+      }
+    }
+
+    if (typeof field.type !== "string") {
+      throw new Error(`Field "${name}" type must be string`);
+    }
+
+    if (typeof field.label !== "string") {
+      throw new Error(`Field "${name}" label must be string`);
+    }
+
+    if (field.options && !Array.isArray(field.options)) {
+      throw new Error(`Field "${name}" options must be array`);
+    }
+  }
+
+  private validateFields(fields: Fields) {
+    Object.entries(fields).forEach(([name, field]) => {
+      this.assertField(field, name);
+    });
+  }
 
   private createForm(): HTMLFormElement {
     const form = document.createElement("form");
@@ -233,27 +277,48 @@ export class FormZen {
     });
   }
 
+  public emitSubmit(): void {
+    const data = this.getFormData();
+
+    if (this.callback) {
+      this.callback(data);
+    }
+  }
+
   private getSubmitButton(): HTMLButtonElement | null {
     return this.form.querySelector('button[type="submit"]');
   }
 
   private getFormData(): Record<string, string | string[]> {
     const data: Record<string, string | string[]> = {};
-    const formData = new FormData(this.form);
 
-    formData.forEach((value, key) => {
-      const val = String(value);
+    const elements = this.form.querySelectorAll<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >("input, select, textarea");
 
-      if (data[key] !== undefined) {
-        const current = data[key];
+    elements.forEach((el) => {
+      const name = el.name;
+      if (!name) return;
+
+      let value: string | string[] = "";
+
+      if (el instanceof HTMLInputElement && el.type === "checkbox") {
+        if (!el.checked) return;
+        value = el.value;
+      } else {
+        value = el.value;
+      }
+
+      if (data[name] !== undefined) {
+        const current = data[name];
 
         if (Array.isArray(current)) {
-          current.push(val);
+          current.push(value as string);
         } else {
-          data[key] = [current, val];
+          data[name] = [current, value as string];
         }
       } else {
-        data[key] = val;
+        data[name] = value as string;
       }
     });
 

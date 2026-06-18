@@ -4,13 +4,22 @@
   --fz-radius: 6px;
 }
 
+
 .form-zen button {
   background: var(--fz-primary);
   border-radius: var(--fz-radius);
+  padding: 5px;
+  border: 2px solid black;
 }
 
 .form-zen{
     background: #fff;
     border: 1px solid var(--fz-border);
     padding: 20px;
+}
+
+.form-zen-group {
+  display: flex;
+  flex-direction: column;
+  margin: 5px 0;
 }
