@@ -1,3 +1,7 @@
+[![npm version](https://img.shields.io/npm/v/%40tosbas%2Fform-zen)](https://www.npmjs.com/package/@tosbas/form-zen)
+[![npm downloads](https://img.shields.io/npm/d18m/%40tosbas%2Fform-zen)](https://www.npmjs.com/package/@tosbas/form-zen)
+[![npm license](https://img.shields.io/npm/l/%40tosbas%2Fform-zen)](https://www.npmjs.com/package/@tosbas/form-zen)
+
 # FormZen
 
 FormZen is a lightweight TypeScript library for generating dynamic browser forms from a simple schema object.
@@ -128,10 +132,10 @@ options: ["Male", "Female"]
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@tosbas/form-zen@1.3.1/dist/form-zen.min.css"
+  href="https://cdn.jsdelivr.net/npm/@tosbas/form-zen@1.3.2/dist/form-zen.min.css"
 />
 
-<script src="https://cdn.jsdelivr.net/npm/@tosbas/form-zen@1.3.1/dist/cdn.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tosbas/form-zen@1.3.2/dist/cdn.global.min.js"></script>
 
 <script>
   const form = new FormZen(
