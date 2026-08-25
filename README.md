@@ -132,10 +132,10 @@ options: ["Male", "Female"]
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@tosbas/form-zen@1.3.2/dist/form-zen.min.css"
+  href="https://cdn.jsdelivr.net/npm/@tosbas/form-zen@1.3.3/dist/form-zen.min.css"
 />
 
-<script src="https://cdn.jsdelivr.net/npm/@tosbas/form-zen@1.3.2/dist/cdn.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tosbas/form-zen@1.3.3/dist/cdn.global.min.js"></script>
 
 <script>
   const form = new FormZen(
