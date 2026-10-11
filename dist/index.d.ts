@@ -14,13 +14,17 @@ type Field = {
 type Fields = Record<string, Field>;
 type FormValue = string | string[];
 type SubmitCallback = (data: Record<string, FormValue>) => void;
+type SubmitButtonOptions = {
+    label?: string;
+    type?: "submit" | "button" | "reset";
+};
 
 declare class FormZen {
     private root;
     private form;
     private fields;
     private callback;
-    constructor(selector: string, fields?: Fields, submitCallback?: SubmitCallback, submitLabel?: string);
+    constructor(selector: string, fields?: Fields, submitCallback?: SubmitCallback, submitButton?: SubmitButtonOptions | string, submitType?: "submit" | "button" | "reset");
     addFields(fields: Fields): void;
     removeFields(names: string[]): void;
     addButtonSubmit(label: string, type?: "submit" | "button" | "reset"): void;
@@ -36,4 +40,4 @@ declare class FormZen {
     private mount;
 }
 
-export { type Field, type Fields, type FormElement, FormZen, type InputType, type SubmitCallback };
+export { type Field, type Fields, type FormElement, FormZen, type InputType, type SubmitButtonOptions, type SubmitCallback };

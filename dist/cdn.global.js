@@ -85,18 +85,21 @@ var FormZenCDN = (() => {
     }
   };
   var FormZen = class {
-    constructor(selector, fields = {}, submitCallback, submitLabel = "Submit") {
+    constructor(selector, fields = {}, submitCallback, submitButton = {}, submitType = "submit") {
       this.callback = null;
       const root = document.querySelector(selector);
       if (!root) {
         throw new Error("Aucun \xE9l\xE9ment trouv\xE9 : " + selector);
       }
       this.root = root;
+      this.callback = submitCallback ?? null;
       this.validateFields(fields);
       this.fields = fields;
       this.form = this.createForm();
       this.renderFields();
-      this.addButtonSubmit(submitLabel);
+      const submitLabel = typeof submitButton === "string" ? submitButton : submitButton.label ?? "Submit";
+      const buttonType = typeof submitButton === "string" ? submitType : submitButton.type ?? "submit";
+      this.addButtonSubmit(submitLabel, buttonType);
       this.bindSubmit();
       this.mount();
     }
@@ -201,7 +204,7 @@ var FormZenCDN = (() => {
       }
     }
     getSubmitButton() {
-      return this.form.querySelector('button[type="submit"]');
+      return this.form.querySelector("button");
     }
     getFormData() {
       const data = {};

@@ -35,4 +35,16 @@ type FormValue = string | string[];
 
 type SubmitCallback = (data: Record<string, FormValue>) => void;
 
-export { Field, Fields, SubmitCallback, InputType, FormElement };
+type SubmitButtonOptions = {
+  label?: string;
+  type?: "submit" | "button" | "reset";
+};
+
+export {
+  Field,
+  Fields,
+  SubmitCallback,
+  SubmitButtonOptions,
+  InputType,
+  FormElement,
+};

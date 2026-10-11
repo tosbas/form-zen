@@ -12,12 +12,18 @@
     <script type="module">
       import { FormZen } from "./dist/index.js";
 
-      const formZen = new FormZen("#myForm", {
-        test: {
-          label: "Hello",
-          type: "select",
+      new FormZen(
+        "#myForm",
+        {
+          name: {
+            type: "text",
+            label: "Nom",
+          },
         },
-      });
+        (data) => {
+          console.log("Formulaire envoyé :", data);
+        },
+      );
     </script>
   </body>
 </html>
