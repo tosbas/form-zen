@@ -2,6 +2,7 @@ import type {
   Field,
   Fields,
   SubmitCallback,
+  SubmitButtonOptions,
   FormElement,
   InputType,
 } from "./types/types";
@@ -136,7 +137,8 @@ export class FormZen {
     selector: string,
     fields: Fields = {},
     submitCallback?: SubmitCallback,
-    submitLabel: string = "Submit",
+    submitButton: SubmitButtonOptions | string = {},
+    submitType: "submit" | "button" | "reset" = "submit",
   ) {
     const root = document.querySelector(selector);
 
@@ -145,6 +147,7 @@ export class FormZen {
     }
 
     this.root = root as HTMLElement;
+    this.callback = submitCallback ?? null;
 
     this.validateFields(fields);
     this.fields = fields;
@@ -152,7 +155,15 @@ export class FormZen {
     this.form = this.createForm();
 
     this.renderFields();
-    this.addButtonSubmit(submitLabel);
+    const submitLabel =
+      typeof submitButton === "string"
+        ? submitButton
+        : submitButton.label ?? "Submit";
+    const buttonType =
+      typeof submitButton === "string"
+        ? submitType
+        : submitButton.type ?? "submit";
+    this.addButtonSubmit(submitLabel, buttonType);
     this.bindSubmit();
     this.mount();
   }
@@ -286,7 +297,7 @@ export class FormZen {
   }
 
   private getSubmitButton(): HTMLButtonElement | null {
-    return this.form.querySelector('button[type="submit"]');
+    return this.form.querySelector("button");
   }
 
   private getFormData(): Record<string, string | string[]> {
@@ -333,6 +344,7 @@ export type {
   Field,
   Fields,
   SubmitCallback,
+  SubmitButtonOptions,
   FormElement,
   InputType,
 } from "./types/types";

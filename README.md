@@ -59,6 +59,21 @@ new FormZen(
 );
 ```
 
+The submit button label and type can be configured with an object as the
+fourth constructor argument. Both properties are optional; the label defaults
+to `"Submit"` and the type defaults to `"submit"`:
+
+```ts
+new FormZen(
+  "#app",
+  { name: { type: "text", label: "Name" } },
+  (data) => console.log(data),
+  { label: "Continue", type: "button" },
+);
+```
+
+The legacy positional form (`"Continue", "button"`) is still supported.
+
 ---
 
 ## 🧩 Field types
