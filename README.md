@@ -13,8 +13,9 @@ It is dependency-free, easy to use, and designed for modern frontend application
 ## ✨ Features
 
 - Generate forms from a declarative schema
-- Support for text, email, password, number, textarea, select, checkbox and radio inputs
-- Automatic labels and placeholders
+- Support for text, email, password, number, date, tel, url, textarea, select, checkbox and radio inputs
+- Accessible labels and grouped checkbox/radio controls
+- Native browser validation with required, min/max, length, pattern and step constraints
 - Clean submit callback with string or array values
 - TypeScript support
 
@@ -33,7 +34,7 @@ npm install @tosbas/form-zen
 ```ts
 import { FormZen } from "@tosbas/form-zen";
 
-new FormZen(
+const form = new FormZen(
   "#app",
   {
     username: {
@@ -59,20 +60,34 @@ new FormZen(
 );
 ```
 
-The submit button label and type can be configured with an object as the
-fourth constructor argument. Both properties are optional; the label defaults
-to `"Submit"` and the type defaults to `"submit"`:
+The submit button is always a native `submit` button, so browser validation and
+form submission work as expected. You can optionally customize its label with
+the fourth constructor argument:
 
 ```ts
 new FormZen(
   "#app",
   { name: { type: "text", label: "Name" } },
   (data) => console.log(data),
-  { label: "Continue", type: "button" },
+  { label: "Continue" },
 );
 ```
 
-The legacy positional form (`"Continue", "button"`) is still supported.
+You can also pass the label directly as a string:
+
+```ts
+new FormZen(
+  "#app",
+  { name: { type: "text", label: "Name" } },
+  (data) => console.log(data),
+  "Continue",
+);
+```
+
+The label defaults to `"Submit"`.
+
+Pass a selector for a container to have FormZen create a form inside it. If the
+selector targets an existing `<form>`, FormZen renders directly into that form.
 
 ---
 
@@ -138,19 +153,24 @@ options: ["Male", "Female"]
 **Behavior:**
 - Single selection group
 
-**Return value:** `string`
+**Return value:** `string` (empty when no option is selected)
 
 ---
 
 ## 🌐 CDN Usage
 
+These unversioned jsDelivr URLs resolve to the latest version published on npm.
+After publishing a release, they will serve that release automatically (subject
+to CDN cache propagation). For reproducible deployments, you can pin a version;
+for example, use `@2.0.0` after that version has been published.
+
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@tosbas/form-zen@1.3.3/dist/form-zen.min.css"
+  href="https://cdn.jsdelivr.net/npm/@tosbas/form-zen/dist/form-zen.min.css"
 />
 
-<script src="https://cdn.jsdelivr.net/npm/@tosbas/form-zen@1.3.3/dist/cdn.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tosbas/form-zen/dist/cdn.global.min.js"></script>
 
 <script>
   const form = new FormZen(
@@ -165,6 +185,8 @@ options: ["Male", "Female"]
   );
 </script>
 ```
+
+To pin this release instead, add `@2.0.0` after `form-zen` in both CDN URLs.
 
 ---
 
@@ -187,9 +209,29 @@ options: ["Male", "Female"]
 ## ⚠️ Notes
 
 - Checkbox fields always return arrays of selected values
+- Empty checkbox groups and multiple selects return empty arrays
+- Radio fields return the selected value or an empty string
 - Select returns `string` or `string[]` depending on `multiple`
+- Disabled fields are omitted from callback data, like native form submission
 - Each field key becomes the HTML `name` attribute
-- Unknown field keys will throw an error (strict mode)
+- Unknown field properties and invalid configurations throw descriptive errors
+
+## 🛠️ Managing fields
+
+Fields can be added or removed after creating the form. Invalid additions are
+rejected before any fields are changed:
+
+```ts
+form.addFields({
+  phone: { type: "tel", label: "Phone", autocomplete: "tel" },
+});
+
+form.removeFields(["phone"]);
+```
+
+Call `destroy()` when the form is no longer needed. It removes a generated form,
+or removes only FormZen-managed fields and its submit button from an existing
+`<form>`.
 
 ---
 
@@ -206,3 +248,7 @@ npm test
 ## 📄 License
 
 MIT
+
+## Contributors
+
+- Tosbas

@@ -8,18 +8,66 @@
 .form-zen button {
   background: var(--fz-primary);
   border-radius: var(--fz-radius);
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
   padding: 5px;
   border: 2px solid black;
 }
 
-.form-zen{
-    background: #fff;
-    border: 1px solid var(--fz-border);
-    padding: 20px;
+.form-zen input:not([type="checkbox"]):not([type="radio"]),
+.form-zen select,
+.form-zen textarea {
+  border: 1px solid var(--fz-border);
+  border-radius: var(--fz-radius);
+  box-sizing: border-box;
+  font: inherit;
+  max-width: 100%;
+  padding: 0.5rem;
+}
+
+.form-zen {
+  background: #fff;
+  border: 1px solid var(--fz-border);
+  padding: 20px;
+}
+
+.form-zen :focus-visible {
+  outline: 2px solid var(--fz-primary);
+  outline-offset: 2px;
+}
+
+.form-zen button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .form-zen-group {
   display: flex;
   flex-direction: column;
-  margin: 5px 0;
+  gap: 0.35rem;
+  margin: 0.75rem 0;
+}
+
+.form-zen-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-zen-group fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.form-zen-group legend {
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.form-zen-options label {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
 }
