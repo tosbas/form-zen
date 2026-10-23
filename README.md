@@ -8,6 +8,8 @@ FormZen is a lightweight TypeScript library for generating dynamic browser forms
 
 It is dependency-free, easy to use, and designed for modern frontend applications.
 
+[Live demo](https://tosbas.github.io/form-zen/)
+
 ---
 
 ## ✨ Features

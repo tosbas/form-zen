@@ -7,6 +7,7 @@ All notable changes to FormZen are documented here.
 ### Changed
 
 - Improve the demo page and CDN stylesheet, and standardize library error messages in English.
+- Add the GitHub Pages live demo link to the README.
 
 ## [2.0.0] - 2026-10-19
 
