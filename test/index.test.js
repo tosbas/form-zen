@@ -31,6 +31,12 @@ function createForm(fields = {}, callback, targetTag = "div") {
 }
 
 describe("FormZen", () => {
+  it("reports a missing mount selector in English", () => {
+    assert.throws(() => new FormZen("#missing"), {
+      message: "No element found for selector: #missing",
+    });
+  });
+
   it("renders fields and invokes the submit callback", () => {
     let received;
     const { root, form } = createForm(

@@ -3,26 +3,79 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="An interactive form example built with FormZen."
+    />
+    <title>FormZen — Form Example</title>
     <link rel="stylesheet" href="./dist/form-zen.min.css" />
-    <title>FormZen</title>
   </head>
   <body>
-    <div id="myForm"></div>
+    <main class="form-zen-demo">
+      <header class="form-zen-demo__header">
+        <p class="form-zen-demo__eyebrow">Interactive demo</p>
+        <h1>A form, made simple.</h1>
+        <p>
+          FormZen generates fields from a schema and returns validated values
+          when the form is submitted.
+        </p>
+      </header>
+
+      <div id="contact-form"></div>
+
+      <section
+        class="form-zen-demo__result"
+        id="result"
+        aria-live="polite"
+        hidden
+      >
+        <h2>Submitted values</h2>
+        <pre id="result-data"></pre>
+      </section>
+    </main>
 
     <script type="module">
       import { FormZen } from "./dist/index.js";
 
+      const result = document.querySelector("#result");
+      const resultData = document.querySelector("#result-data");
+
       new FormZen(
-        "#myForm",
+        "#contact-form",
         {
           name: {
             type: "text",
-            label: "Nom",
+            label: "Name",
+            placeholder: "Alex Morgan",
+            autocomplete: "name",
+            required: true,
+          },
+          email: {
+            type: "email",
+            label: "Email address",
+            placeholder: "alex@example.com",
+            autocomplete: "email",
+            required: true,
+          },
+          subject: {
+            type: "select",
+            label: "Subject",
+            options: ["Question", "Feedback", "Other"],
+            required: true,
+          },
+          message: {
+            type: "textarea",
+            label: "Message",
+            placeholder: "How can we help?",
+            required: true,
+            minLength: 10,
           },
         },
         (data) => {
-          console.log("Formulaire envoyé :", data);
+          resultData.textContent = JSON.stringify(data, null, 2);
+          result.hidden = false;
         },
+        "Send message",
       );
     </script>
   </body>

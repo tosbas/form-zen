@@ -117,7 +117,7 @@ var FormZenCDN = (() => {
       };
       const root = document.querySelector(selector);
       if (!root) {
-        throw new Error("Aucun \xE9l\xE9ment trouv\xE9 : " + selector);
+        throw new Error("No element found for selector: " + selector);
       }
       const submitLabel = this.getSubmitLabel(submitButton);
       if (submitCallback !== void 0 && typeof submitCallback !== "function") {

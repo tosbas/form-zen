@@ -179,7 +179,7 @@ export class FormZen {
     const root = document.querySelector<HTMLElement>(selector);
 
     if (!root) {
-      throw new Error("Aucun élément trouvé : " + selector);
+      throw new Error("No element found for selector: " + selector);
     }
     const submitLabel = this.getSubmitLabel(submitButton);
     if (submitCallback !== undefined && typeof submitCallback !== "function") {

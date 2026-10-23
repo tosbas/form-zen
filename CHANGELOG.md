@@ -2,6 +2,16 @@
 
 All notable changes to FormZen are documented here.
 
+## [2.0.1] - 2026-10-23
+
+### Changed
+
+- Improve the demo page and CDN stylesheet, and standardize library error messages in English.
+
+### Documentation
+
+- Remove the incorrect contributor note from the changelog.
+
 ## [2.0.0] - 2026-10-19
 
 ### Changed

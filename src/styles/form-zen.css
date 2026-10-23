@@ -1,18 +1,23 @@
 :root {
-  --fz-primary: #3b82f6;
-  --fz-border: #ccc;
-  --fz-radius: 6px;
+  --fz-primary: #2563eb;
+  --fz-border: #d8dfeb;
+  --fz-radius: 0.6rem;
 }
-
 
 .form-zen button {
   background: var(--fz-primary);
   border-radius: var(--fz-radius);
+  border: 0;
   color: #fff;
   cursor: pointer;
   font: inherit;
-  padding: 5px;
-  border: 2px solid black;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  transition: background-color 150ms ease, opacity 150ms ease;
+}
+
+.form-zen button:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--fz-primary), #000 12%);
 }
 
 .form-zen input:not([type="checkbox"]):not([type="radio"]),
@@ -23,13 +28,15 @@
   box-sizing: border-box;
   font: inherit;
   max-width: 100%;
-  padding: 0.5rem;
+  padding: 0.7rem 0.8rem;
 }
 
 .form-zen {
   background: #fff;
   border: 1px solid var(--fz-border);
-  padding: 20px;
+  border-radius: 1rem;
+  box-shadow: 0 1rem 2.5rem rgb(23 32 51 / 8%);
+  padding: 1.25rem;
 }
 
 .form-zen :focus-visible {
@@ -70,4 +77,85 @@
   align-items: center;
   display: flex;
   gap: 0.5rem;
+}
+
+.form-zen-demo {
+  box-sizing: border-box;
+  color: #172033;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  margin-inline: auto;
+  max-width: 36rem;
+  padding: 2rem 1rem;
+  width: 100%;
+}
+
+.form-zen-demo__header {
+  margin-bottom: 1.5rem;
+}
+
+.form-zen-demo__eyebrow {
+  color: var(--fz-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.form-zen-demo__header h1 {
+  font-size: clamp(1.8rem, 5vw, 2.4rem);
+  letter-spacing: -0.04em;
+  margin: 0;
+}
+
+.form-zen-demo__header p:last-child {
+  color: #526078;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.form-zen-demo #contact-form .form-zen button {
+  width: 100%;
+}
+
+.form-zen-demo
+  #contact-form
+  .form-zen
+  input:not([type="checkbox"]):not([type="radio"]),
+.form-zen-demo #contact-form .form-zen select,
+.form-zen-demo #contact-form .form-zen textarea {
+  min-height: 2.75rem;
+  width: 100%;
+}
+
+.form-zen-demo #contact-form .form-zen textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+.form-zen-demo__result {
+  background: #fff;
+  border: 1px solid var(--fz-border);
+  border-radius: 0.75rem;
+  margin-top: 1.5rem;
+  padding: 1rem;
+}
+
+.form-zen-demo__result[hidden] {
+  display: none;
+}
+
+.form-zen-demo__result h2 {
+  font-size: 1rem;
+  margin: 0 0 0.75rem;
+}
+
+.form-zen-demo__result pre {
+  color: #334155;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+  overflow-x: auto;
 }
